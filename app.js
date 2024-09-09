@@ -64,7 +64,7 @@ app.get("/words", (req, res) => {
 //GET yksi sana = englanninkielinen vastine suomenkieliselle sanalle
 app.get("/words/:finnish", (req, res) => {
   // Otetaan URL-parametrina saatu suomenkielinen sana ja muutetaan se pieniksi kirjaimiksi
-  const finnishWord = req.params.finnish.toLowerCase();
+  const finnishWord = req.params.fin.toLowerCase();
   // Luetaan sanakirja tiedostosta synkronisesti, käyttäen UTF-8-koodausta kuten Mikon esimerkissä
   const data = fs.readFileSync("./sanakirja.txt", {
     encoding: "utf8",
@@ -85,71 +85,31 @@ app.get("/words/:finnish", (req, res) => {
 
   if (englishWord) {
     // Jos englanninkielinen sana löytyi, palautetaan se, muuten palautetaan 404-virhe
-    res.status(200).json({ english: englishWord });
+    res.status(200).json({ eng: englishWord });
   } else {
     res.status(404).json({ message: `Sanaa ${finnishWord} ei löytynyt` });
   }
-});
-
 // POST: Lisää uusi sana sanakirjaan
 app.post("/words", (req, res) => {
-  // Haetaan pyyntödatasta suomenkielinen ja englanninkielinen sana
+  // Haetaan pyynnöstä suomenkielinen ja englanninkielinen sana
   const { fin, eng } = req.body;
 
-  // Tarkistetaan, että molemmat sanat on annettu
+  // Tarkistetaan, että molemmat sanat on annettu ja annetaan virheilmoitus jos toinen sana puuttuu
   if (!fin || !eng) {
     return res.status(400).json({
-      error: "Molemmat suomen- ja englanninkieliset sanat ovat pakollisia",
+      error: "Lisääthän sekä suomenkielisen että englanninkielisen sanan",
     });
   }
 
-  // Luodaan uusi rivi tiedostoon: suomenkielinen ja englanninkielinen sana välilyönnillä erotettuna
+  // Luodaan uusi rivi tiedostoon eli suomenkielinen ja englanninkielinen sana välilyönnillä erotettuna
   const newEntry = `${fin} ${eng}\n`;
 
-  // Lisätään uusi rivi tiedostoon (synkronisesti)
+  // Lisätään uusi rivi tiedostoon
   fs.appendFileSync("./sanakirja.txt", newEntry, "utf8");
 
-  // Palautetaan vastaus onnistuneesta lisäyksestä
+  // Palautetaan vastaus jos lisäys onnistui
   res.status(201).json({ message: "Sana lisätty onnistuneesti", fin, eng });
 });
-
-/* POST new word
-app.post("/words", (req, res) => {
-  const newWord = req.body;
-  dictionary.push(newWord);
-
-  // Save the new word to the file
-  const wordLine = `${newWord.fin} ${newWord.eng}\n`;
-  fs.appendFileSync("./sanakirja.txt", wordLine);
-
-  res.json(dictionary);
-});
-/*app.post("/words", (req, res) => {
-  const newWord = req.body;
-  dictionary.push(newWord);
-  res.json(dictionary);
-});
-
-/*ADD user
-app.post("/users", (req, res) => {
-  const user = req.body;
-  data.push(user);
-  res.json(data);
-});
-
-// UPDATE user
-app.put("/users/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const updatedUser = req.body;
-  data = data.map((user) => (user.id === id ? updatedUser : user));
-  res.json(data);
-});
-//DELETE user
-app.delete("/users/:id", (req, res) => {
-  const id = Number(req.params.id);
-  data = data.filter((user) => user.id !== id);
-  res.json(data);
-});*/
 
 app.listen(3000, () => {
   console.log("Server listening at port 3000");
