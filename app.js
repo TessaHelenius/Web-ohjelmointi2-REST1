@@ -64,7 +64,7 @@ app.get("/words", (req, res) => {
 //GET yksi sana = englanninkielinen vastine suomenkieliselle sanalle
 app.get("/words/:finnish", (req, res) => {
   // Otetaan URL-parametrina saatu suomenkielinen sana ja muutetaan se pieniksi kirjaimiksi
-  const finnishWord = req.params.fin.toLowerCase();
+  const finnishWord = req.params.finnish.toLowerCase();
   // Luetaan sanakirja tiedostosta synkronisesti, käyttäen UTF-8-koodausta kuten Mikon esimerkissä
   const data = fs.readFileSync("./sanakirja.txt", {
     encoding: "utf8",
@@ -89,6 +89,7 @@ app.get("/words/:finnish", (req, res) => {
   } else {
     res.status(404).json({ message: `Sanaa ${finnishWord} ei löytynyt` });
   }
+});
 // POST: Lisää uusi sana sanakirjaan
 app.post("/words", (req, res) => {
   // Haetaan pyynnöstä suomenkielinen ja englanninkielinen sana
