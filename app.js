@@ -1,6 +1,8 @@
 let dictionary = [];
 const express = require("express");
 const fs = require("fs");
+
+// TÄHÄN EI TULLUT MUUTOKSIA? (Ilmeisesti oli tarkoituskin näin?)
 //const bodyParser = require("body-parser");
 /* const app = express().use(bodyParser.json()); //vanha tapa - ei enää voimassa. 
 kts. https://devdocs.io/express/ -> req.body*/
@@ -104,7 +106,6 @@ app.post("/words", (req, res) => {
 
   // Luodaan uusi rivi tiedostoon eli suomenkielinen ja englanninkielinen sana välilyönnillä erotettuna
   const newEntry = `${fin} ${eng}\n`;
-
   // Lisätään uusi rivi tiedostoon
   fs.appendFileSync("./sanakirja.txt", newEntry, "utf8");
 
